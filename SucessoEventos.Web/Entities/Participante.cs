@@ -9,7 +9,7 @@ public class Participante
 
     [Required]
     [StringLength(100)]
-    public string Nome { get; set; }
+    public string Nome { get; set; } = default!;
 
     [Required]
     [DataType(DataType.Date)]
@@ -17,9 +17,9 @@ public class Participante
 
     [Required]
     [Phone]
-    public string Telefone { get; set; }
+    public string Telefone { get; set; } = default!;
 
     // Navegação
-    public ICollection<AxParticipantePacote> AxParticipantePacotes { get; set; }
-    public ICollection<AxParticipanteAtividade> AxParticipanteAtividades { get; set; }
+    public ICollection<AxParticipantePacote> AxParticipantePacotes { get; set; } = default!;
+    public ICollection<AxParticipanteAtividade> AxParticipanteAtividades { get; set; } = default!;
 }

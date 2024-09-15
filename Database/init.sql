@@ -1,4 +1,5 @@
 CREATE DATABASE SucessoEventosDb;
+USE SucessoEventosDb;
 -- Criação da tabela Participantes
 CREATE TABLE Participantes (
     CodPar INT PRIMARY KEY IDENTITY(1,1),

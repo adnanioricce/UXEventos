@@ -6,6 +6,6 @@ public class AxParticipanteAtividade
     public int CodAtv { get; set; }
 
     // Navegação
-    public Participante Participante { get; set; }
-    public Atividade Atividade { get; set; }
+    public Participante Participante { get; set; } = default!;
+    public Atividade Atividade { get; set; } = default!;
 }

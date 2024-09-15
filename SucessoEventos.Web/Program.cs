@@ -14,6 +14,13 @@ builder.Services.AddDbContext<AppDbContext>(opt =>{
         opt.EnableSensitiveDataLogging();       
     } 
 });
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 if(app.Environment.IsDevelopment()){
     
@@ -26,7 +33,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseSession();
 app.UseHttpsRedirection();
 
 app.UseRouting();
@@ -37,10 +44,11 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Inscricao}/{action=Create}/{id?}")
     .WithStaticAssets();
 
-app.MapRazorPages()
-   .WithStaticAssets();
+
+// app.MapRazorPages()
+//    .WithStaticAssets();
 
 app.Run();

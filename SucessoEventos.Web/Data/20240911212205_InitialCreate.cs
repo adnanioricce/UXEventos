@@ -60,48 +60,44 @@ namespace SucessoEventos.Web.Data
                 columns: table => new
                 {
                     CodPar = table.Column<int>(type: "int", nullable: false),
-                    CodAtv = table.Column<int>(type: "int", nullable: false),
-                    ParticipanteCodPar = table.Column<int>(type: "int", nullable: false),
-                    AtividadeCodAtv = table.Column<int>(type: "int", nullable: false)
+                    CodAtv = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AxParticipanteAtividades", x => new { x.CodPar, x.CodAtv });
                     table.ForeignKey(
                         name: "FK_AxParticipanteAtividades_Atividades_AtividadeCodAtv",
-                        column: x => x.AtividadeCodAtv,
+                        column: x => x.CodAtv,
                         principalTable: "Atividades",
                         principalColumn: "CodAtv",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AxParticipanteAtividades_Participantes_ParticipanteCodPar",
-                        column: x => x.ParticipanteCodPar,
+                        column: x => x.CodPar,
                         principalTable: "Participantes",
                         principalColumn: "CodPar",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AxParticipantePacotes",
+                name: "AxParticipantePacote",
                 columns: table => new
                 {
                     CodPar = table.Column<int>(type: "int", nullable: false),
-                    CodPacote = table.Column<int>(type: "int", nullable: false),
-                    ParticipanteCodPar = table.Column<int>(type: "int", nullable: false),
-                    PacoteCodPacote = table.Column<int>(type: "int", nullable: false)
+                    CodPacote = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AxParticipantePacotes", x => new { x.CodPar, x.CodPacote });
                     table.ForeignKey(
                         name: "FK_AxParticipantePacotes_Pacotes_PacoteCodPacote",
-                        column: x => x.PacoteCodPacote,
+                        column: x => x.CodPacote,
                         principalTable: "Pacotes",
                         principalColumn: "CodPacote",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AxParticipantePacotes_Participantes_ParticipanteCodPar",
-                        column: x => x.ParticipanteCodPar,
+                        column: x => x.CodPar,
                         principalTable: "Participantes",
                         principalColumn: "CodPar",
                         onDelete: ReferentialAction.Cascade);

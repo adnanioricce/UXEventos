@@ -1,7 +1,12 @@
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SucessoEventos.Entities;
+using SucessoEventos.Web.Extensions;
 using SucessoEventos.Web.Models;
 using SucessoEventos.Web.ViewModels;
 
@@ -23,7 +28,7 @@ public class InscricaoController : Controller
         {
             Inscricao = new InscricaoModel(),
             Pacotes = new SelectList(_context.Pacotes.ToList(), "CodPacote", "Descricao"),
-            Atividades = _context.Atividades.ToList()
+            Atividades = _context.Atividades.Select(atv => new SelectListItem(atv.DescAtv,atv.CodAtv.ToString())).ToList()
         };
 
         return View(viewModel);
@@ -34,23 +39,23 @@ public class InscricaoController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Create(InscricaoViewModel viewModel)
     {
+        ModelState.Remove("Pacotes");
         if (ModelState.IsValid)
         {
             // Salvar a inscrição em sessão para confirmação
-            // HttpContext.Session.Set("InscricaoData", viewModel.Inscricao);
+            HttpContext.Session.Set("InscricaoData",viewModel.Inscricao);
             return RedirectToAction(nameof(Confirmacao));
         }
 
         viewModel.Pacotes = new SelectList(_context.Pacotes.ToList(), "CodPacote", "Descricao");
-        viewModel.Atividades = _context.Atividades.ToList();
+        viewModel.Atividades = _context.Atividades.Select(atv => new SelectListItem(atv.DescAtv,atv.CodAtv.ToString())).ToList();
         return View(viewModel);
     }
 
     // GET: Inscricao/Confirmacao
     public IActionResult Confirmacao()
     {
-        // var inscricao = HttpContext.Session.Get<InscricaoModel>("InscricaoData");
-        InscricaoModel inscricao = null;
+        InscricaoModel? inscricao = HttpContext.Session.Get<InscricaoModel>("InscricaoData");
         if (inscricao == null)
         {
             return RedirectToAction(nameof(Create));
@@ -59,7 +64,7 @@ public class InscricaoController : Controller
         var viewModel = new ConfirmacaoViewModel
         {
             Inscricao = inscricao,
-            PacoteDescricao = _context.Pacotes.FirstOrDefault(p => p.CodPacote == inscricao.PacoteId)?.Descricao,
+            PacoteDescricao = _context.Pacotes.FirstOrDefault(p => p.CodPacote == inscricao.PacoteId)?.Descricao ?? "Não encontrado",
             AtividadesSelecionadas = _context.Atividades
                 .Where(a => inscricao.AtividadesSelecionadas.Contains(a.CodAtv))
                 .ToList()
@@ -73,11 +78,31 @@ public class InscricaoController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Confirmacao(ConfirmacaoViewModel viewModel)
     {
-        if (!ModelState.IsValid)
-            return View(viewModel);
+        InscricaoModel? inscricao = HttpContext.Session.Get<InscricaoModel>("InscricaoData");
+        if (inscricao is null)
+            return RedirectToAction(nameof(Create));
         
         // Salvar a inscrição no banco de dados
-        // _context.Inscricoes.Add(viewModel.Inscricao);
+        var participante = new Participante(){
+            Nome = inscricao.Nome
+            ,DataNascimento = DateTime.ParseExact(inscricao.DataNascimento,"dd/MM/yyyy",null)
+            ,Telefone = inscricao.Telefone
+            // ,AxParticipantePacotes = new AxParticipantePacote[]{
+            //     new AxParticipantePacote{
+            //         Participante = this
+            //     }
+            // }
+        };
+        var participantePacote = new AxParticipantePacote(){
+            Participante = participante            
+        };
+        var participanteAtividades = inscricao.AtividadesSelecionadas.Select(atv => new AxParticipanteAtividade{
+            CodAtv = atv
+            ,Participante = participante
+        });
+        _context.Participantes.Add(participante);
+        _context.AxParticipanteAtividade.AddRange(participanteAtividades);
+        _context.AxParticipantePacote.Add(participantePacote);
         _context.SaveChanges();
 
         // Limpar a sessão

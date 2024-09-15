@@ -9,7 +9,7 @@ public class Atividade
 
     [Required]
     [StringLength(200)]
-    public string DescAtv { get; set; }
+    public string DescAtv { get; set; } = default!;
 
     [Required]
     public int Vagas { get; set; }

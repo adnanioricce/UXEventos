@@ -13,7 +13,8 @@ WORKDIR /usr/src/app
 COPY init.sql .
 
 CMD /opt/mssql/bin/sqlservr & \
-    sleep 30s && \
-    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $MSSQL_SA_PASSWORD -d master -i /usr/src/app/init.sql && \
+    sleep 15s && \
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $MSSQL_SA_PASSWORD -Q "CREATE DATABASE SucessoEventosDb" && \
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $MSSQL_SA_PASSWORD -d SucessoEventosDb -i /usr/src/app/init.sql && \
     tail -f /dev/null
 

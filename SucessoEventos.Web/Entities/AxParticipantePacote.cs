@@ -8,6 +8,6 @@ public class AxParticipantePacote
     public int CodPacote { get; set; }
 
     // Navegação
-    public Participante Participante { get; set; }
-    public Pacote Pacote { get; set; }
+    public Participante Participante { get; set; } = default!;
+    public Pacote Pacote { get; set; } = default!;
 }

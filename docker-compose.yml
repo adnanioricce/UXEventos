@@ -1,6 +1,6 @@
 services:  
   db:
-    image: adnanioricce/eventos-db:latest    
+    image: adnanioricce/eventos-db:latest
     build:
       context: Database
       dockerfile: Dockerfile

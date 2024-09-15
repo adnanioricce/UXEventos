@@ -7,47 +7,52 @@
 <h2>Inscrição</h2>
 
 <form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Inscricao.Nome"></label>
-        <input asp-for="Inscricao.Nome" class="form-control" />
-        <span asp-validation-for="Inscricao.Nome" class="text-danger"></span>
+    <div class="input-field">
+        <label asp-for="Inscricao.Nome" class="active"></label>
+        <input asp-for="Inscricao.Nome" class="validate" />
+        <span asp-validation-for="Inscricao.Nome" class="helper-text red-text"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Inscricao.DataNascimento"></label>
-        <input asp-for="Inscricao.DataNascimento" class="form-control" type="date" />
-        <span asp-validation-for="Inscricao.DataNascimento" class="text-danger"></span>
+    <div class="input-field">
+        <label asp-for="Inscricao.DataNascimento" class="active"></label>
+        <input asp-for="Inscricao.DataNascimento" class="datepicker validate" type="text" />
+        <span asp-validation-for="Inscricao.DataNascimento" class="helper-text red-text"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Inscricao.Telefone"></label>
-        <input asp-for="Inscricao.Telefone" class="form-control" />
-        <span asp-validation-for="Inscricao.Telefone" class="text-danger"></span>
+    <div class="input-field">
+        <label asp-for="Inscricao.Telefone" class="active"></label>
+        <input asp-for="Inscricao.Telefone" class="validate" />
+        <span asp-validation-for="Inscricao.Telefone" class="helper-text red-text"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Inscricao.PacoteId"></label>
-        <select asp-for="Inscricao.PacoteId" asp-items="Model.Pacotes" class="form-control">
+    <div class="input-field">
+        <label asp-for="Inscricao.PacoteId" class="active"></label>
+        <select asp-for="Inscricao.PacoteId" asp-items="Model.Pacotes">
             <option value="">Selecione um Pacote</option>
         </select>
-        <span asp-validation-for="Inscricao.PacoteId" class="text-danger"></span>
+        <span asp-validation-for="Inscricao.PacoteId" class="helper-text red-text"></span>
     </div>
+                 
+    <div class="input-field">
+        <label asp-for="Inscricao.AtividadesSelecionadas" class="active">Atividades</label>
+        <select asp-for="Inscricao.AtividadesSelecionadas" asp-items="Model.Atividades" multiple="multiple">
+        </select>
+        <span asp-validation-for="Inscricao.AtividadesSelecionadas" class="helper-text red-text"></span>
+    </div>    
 
-    <div class="form-group">
-        <label>Atividades</label>
-        <div>
-            @foreach (var atividade in Model.Atividades)
-            {
-                <div class="form-check">
-                    <input asp-for="Inscricao.AtividadesSelecionadas" type="checkbox" value="@atividade.CodAtv" class="form-check-input" />
-                    <label class="form-check-label">@atividade.DescAtv (@atividade.Preco.ToString("C"))</label>
-                </div>
-            }
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Próximo</button>
+    <button type="submit" class="btn btn-primary">Próximo</button>    
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
+
+        var dateElems = document.querySelectorAll('.datepicker');
+        M.Datepicker.init(dateElems, {
+            format: 'dd/mm/yyyy'
+        });
+    });
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
