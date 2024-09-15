@@ -1,0 +1,54 @@
+@model InscricaoViewModel
+
+@{
+    ViewData["Title"] = "Inscrição";
+}
+
+<h2>Inscrição</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Inscricao.Nome"></label>
+        <input asp-for="Inscricao.Nome" class="form-control" />
+        <span asp-validation-for="Inscricao.Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Inscricao.DataNascimento"></label>
+        <input asp-for="Inscricao.DataNascimento" class="form-control" type="date" />
+        <span asp-validation-for="Inscricao.DataNascimento" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Inscricao.Telefone"></label>
+        <input asp-for="Inscricao.Telefone" class="form-control" />
+        <span asp-validation-for="Inscricao.Telefone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Inscricao.PacoteId"></label>
+        <select asp-for="Inscricao.PacoteId" asp-items="Model.Pacotes" class="form-control">
+            <option value="">Selecione um Pacote</option>
+        </select>
+        <span asp-validation-for="Inscricao.PacoteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Atividades</label>
+        <div>
+            @foreach (var atividade in Model.Atividades)
+            {
+                <div class="form-check">
+                    <input asp-for="Inscricao.AtividadesSelecionadas" type="checkbox" value="@atividade.CodAtv" class="form-check-input" />
+                    <label class="form-check-label">@atividade.DescAtv (@atividade.Preco.ToString("C"))</label>
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Próximo</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

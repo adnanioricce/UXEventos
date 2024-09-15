@@ -1,0 +1,38 @@
+services:  
+  db:
+    image: adnanioricce/eventos-db:latest    
+    build:
+      context: Database
+      dockerfile: Dockerfile
+    ports:
+      - "3314:1433"
+    environment:
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+      - ACCEPT_EULA=Y
+    volumes:
+      - db_data:/var/opt/mssql
+    networks:
+      - app-network
+  
+  webapp:
+    image: adnanioricce/eventos-app:latest
+    container_name: webapp
+    build:
+      context: .
+      dockerfile: SucessoEventos.Web/Dockerfile
+    ports:
+      - "5040:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+# Redes
+networks:
+  app-network:
+    driver: bridge

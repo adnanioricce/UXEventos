@@ -1,0 +1,45 @@
+@model SucessoEventos.Web.ViewModels.ConfirmacaoViewModel
+
+@{
+    ViewData["Title"] = "Confirmação de Inscrição";
+}
+
+<h2>Confirmação de Inscrição</h2>
+
+<div>
+    <h4>Por favor, confirme seus dados:</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Nome</dt>
+        <dd class="col-sm-10">@Model.Inscricao.Nome</dd>
+
+        <dt class="col-sm-2">Data de Nascimento</dt>
+        <dd class="col-sm-10">@Model.Inscricao.DataNascimento.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">Telefone</dt>
+        <dd class="col-sm-10">@Model.Inscricao.Telefone</dd>
+
+        <dt class="col-sm-2">Pacote</dt>
+        <dd class="col-sm-10">@Model.PacoteDescricao</dd>
+
+        <dt class="col-sm-2">Atividades</dt>
+        <dd class="col-sm-10">
+            @if (Model.AtividadesSelecionadas.Count > 0)
+            {
+                <ul>
+                    @foreach (var atividade in Model.AtividadesSelecionadas)
+                    {
+                        <li>@atividade.DescAtv (@atividade.Preco.ToString("C"))</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Nenhuma atividade selecionada</p>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Confirmacao" method="post">
+        <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
+    </form>
+</div>
