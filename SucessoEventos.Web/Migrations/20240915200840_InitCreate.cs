@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SucessoEventos.Web.Data
+namespace SucessoEventos.Web.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace SucessoEventos.Web.Data
                 {
                     CodAtv = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DescAtv = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    DescAtv = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Vagas = table.Column<int>(type: "int", nullable: false),
                     Preco = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -33,7 +33,8 @@ namespace SucessoEventos.Web.Data
                     CodPacote = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Preco = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                    DataViradaPreco = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,9 +47,9 @@ namespace SucessoEventos.Web.Data
                 {
                     CodPar = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Telefone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Telefone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,27 +57,33 @@ namespace SucessoEventos.Web.Data
                 });
 
             migrationBuilder.CreateTable(
-                name: "AxParticipanteAtividades",
+                name: "AxParticipanteAtividade",
                 columns: table => new
                 {
                     CodPar = table.Column<int>(type: "int", nullable: false),
-                    CodAtv = table.Column<int>(type: "int", nullable: false)
+                    CodAtv = table.Column<int>(type: "int", nullable: false),
+                    ParticipanteCodPar = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AxParticipanteAtividades", x => new { x.CodPar, x.CodAtv });
+                    table.PrimaryKey("PK_AxParticipanteAtividade", x => new { x.CodPar, x.CodAtv });
                     table.ForeignKey(
-                        name: "FK_AxParticipanteAtividades_Atividades_AtividadeCodAtv",
+                        name: "FK_AxParticipanteAtividade_Atividades_CodAtv",
                         column: x => x.CodAtv,
                         principalTable: "Atividades",
                         principalColumn: "CodAtv",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AxParticipanteAtividades_Participantes_ParticipanteCodPar",
+                        name: "FK_AxParticipanteAtividade_Participantes_CodPar",
                         column: x => x.CodPar,
                         principalTable: "Participantes",
                         principalColumn: "CodPar",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AxParticipanteAtividade_Participantes_ParticipanteCodPar",
+                        column: x => x.ParticipanteCodPar,
+                        principalTable: "Participantes",
+                        principalColumn: "CodPar");
                 });
 
             migrationBuilder.CreateTable(
@@ -88,15 +95,15 @@ namespace SucessoEventos.Web.Data
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AxParticipantePacotes", x => new { x.CodPar, x.CodPacote });
+                    table.PrimaryKey("PK_AxParticipantePacote", x => new { x.CodPar, x.CodPacote });
                     table.ForeignKey(
-                        name: "FK_AxParticipantePacotes_Pacotes_PacoteCodPacote",
+                        name: "FK_AxParticipantePacote_Pacotes_CodPacote",
                         column: x => x.CodPacote,
                         principalTable: "Pacotes",
                         principalColumn: "CodPacote",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AxParticipantePacotes_Participantes_ParticipanteCodPar",
+                        name: "FK_AxParticipantePacote_Participantes_CodPar",
                         column: x => x.CodPar,
                         principalTable: "Participantes",
                         principalColumn: "CodPar",
@@ -104,34 +111,29 @@ namespace SucessoEventos.Web.Data
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AxParticipanteAtividades_AtividadeCodAtv",
-                table: "AxParticipanteAtividades",
-                column: "AtividadeCodAtv");
+                name: "IX_AxParticipanteAtividade_CodAtv",
+                table: "AxParticipanteAtividade",
+                column: "CodAtv");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AxParticipanteAtividades_ParticipanteCodPar",
-                table: "AxParticipanteAtividades",
+                name: "IX_AxParticipanteAtividade_ParticipanteCodPar",
+                table: "AxParticipanteAtividade",
                 column: "ParticipanteCodPar");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AxParticipantePacotes_PacoteCodPacote",
-                table: "AxParticipantePacotes",
-                column: "PacoteCodPacote");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AxParticipantePacotes_ParticipanteCodPar",
-                table: "AxParticipantePacotes",
-                column: "ParticipanteCodPar");
+                name: "IX_AxParticipantePacote_CodPacote",
+                table: "AxParticipantePacote",
+                column: "CodPacote");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AxParticipanteAtividades");
+                name: "AxParticipanteAtividade");
 
             migrationBuilder.DropTable(
-                name: "AxParticipantePacotes");
+                name: "AxParticipantePacote");
 
             migrationBuilder.DropTable(
                 name: "Atividades");

@@ -14,4 +14,6 @@ public class Pacote
     [Required]
     [StringLength(200)]
     public string Descricao { get; set; } = default!;
+
+    public ICollection<AxParticipantePacote> AxParticipantePacotes { get; set; } = default!;
 }

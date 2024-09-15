@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SucessoEventos.Web.Data.Configuration;
 
 namespace SucessoEventos.Entities;
 
@@ -17,12 +18,8 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // Configurações específicas
-        modelBuilder.Entity<AxParticipantePacote>()
-            .HasKey(ap => new { ap.CodPar, ap.CodPacote });
-
-        modelBuilder.Entity<AxParticipanteAtividade>()
-            .HasKey(aa => new { aa.CodPar, aa.CodAtv });
+        new ParticipantesConfiguration()
+            .Configure(modelBuilder);
+        
     }
 }

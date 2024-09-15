@@ -8,7 +8,7 @@ using SucessoEventos.Entities;
 
 #nullable disable
 
-namespace SucessoEventos.Web.Data
+namespace SucessoEventos.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -32,11 +32,11 @@ namespace SucessoEventos.Web.Data
 
                     b.Property<string>("DescAtv")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("Vagas")
                         .HasColumnType("int");
@@ -54,19 +54,16 @@ namespace SucessoEventos.Web.Data
                     b.Property<int>("CodAtv")
                         .HasColumnType("int");
 
-                    b.Property<int>("AtividadeCodAtv")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ParticipanteCodPar")
-                        .HasColumnType("int");
+                    // b.Property<int?>("ParticipanteCodPar")
+                    //     .HasColumnType("int");
 
                     b.HasKey("CodPar", "CodAtv");
 
-                    b.HasIndex("AtividadeCodAtv");
+                    b.HasIndex("CodAtv");
 
                     b.HasIndex("ParticipanteCodPar");
 
-                    b.ToTable("AxParticipanteAtividades");
+                    b.ToTable("AxParticipanteAtividade");
                 });
 
             modelBuilder.Entity("SucessoEventos.Entities.AxParticipantePacote", b =>
@@ -77,19 +74,11 @@ namespace SucessoEventos.Web.Data
                     b.Property<int>("CodPacote")
                         .HasColumnType("int");
 
-                    b.Property<int>("PacoteCodPacote")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ParticipanteCodPar")
-                        .HasColumnType("int");
-
                     b.HasKey("CodPar", "CodPacote");
 
-                    b.HasIndex("PacoteCodPacote");
+                    b.HasIndex("CodPacote");
 
-                    b.HasIndex("ParticipanteCodPar");
-
-                    b.ToTable("AxParticipantePacotes");
+                    b.ToTable("AxParticipantePacote");
                 });
 
             modelBuilder.Entity("SucessoEventos.Entities.Pacote", b =>
@@ -100,13 +89,16 @@ namespace SucessoEventos.Web.Data
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CodPacote"));
 
+                    b.Property<DateTime>("DataViradaPreco")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Descricao")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("CodPacote");
 
@@ -126,31 +118,36 @@ namespace SucessoEventos.Web.Data
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("CodPar");
 
-                    b.ToTable("Participantes");
+                    b.ToTable("Participantes", (string)null);
                 });
 
             modelBuilder.Entity("SucessoEventos.Entities.AxParticipanteAtividade", b =>
                 {
                     b.HasOne("SucessoEventos.Entities.Atividade", "Atividade")
                         .WithMany()
-                        .HasForeignKey("AtividadeCodAtv")
+                        .HasForeignKey("CodAtv")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SucessoEventos.Entities.Participante", "Participante")
-                        .WithMany("AxParticipanteAtividades")
-                        .HasForeignKey("ParticipanteCodPar")
+                        .WithMany()
+                        .HasForeignKey("CodPar")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SucessoEventos.Entities.Participante", null)
+                        .WithMany("AxParticipanteAtividades")
+                        .HasForeignKey("ParticipanteCodPar");
 
                     b.Navigation("Atividade");
 
@@ -160,20 +157,25 @@ namespace SucessoEventos.Web.Data
             modelBuilder.Entity("SucessoEventos.Entities.AxParticipantePacote", b =>
                 {
                     b.HasOne("SucessoEventos.Entities.Pacote", "Pacote")
-                        .WithMany()
-                        .HasForeignKey("PacoteCodPacote")
+                        .WithMany("AxParticipantePacotes")
+                        .HasForeignKey("CodPacote")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SucessoEventos.Entities.Participante", "Participante")
                         .WithMany("AxParticipantePacotes")
-                        .HasForeignKey("ParticipanteCodPar")
+                        .HasForeignKey("CodPar")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Pacote");
 
                     b.Navigation("Participante");
+                });
+
+            modelBuilder.Entity("SucessoEventos.Entities.Pacote", b =>
+                {
+                    b.Navigation("AxParticipantePacotes");
                 });
 
             modelBuilder.Entity("SucessoEventos.Entities.Participante", b =>
