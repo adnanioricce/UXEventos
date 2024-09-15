@@ -93,14 +93,17 @@ public class InscricaoController : Controller
             //     }
             // }
         };
+        
+        _context.Participantes.Add(participante);
+        _context.SaveChanges();
         var participantePacote = new AxParticipantePacote(){
-            Participante = participante            
+            CodPacote = inscricao.PacoteId
+            ,CodPar = participante.CodPar
         };
         var participanteAtividades = inscricao.AtividadesSelecionadas.Select(atv => new AxParticipanteAtividade{
-            CodAtv = atv
-            ,Participante = participante
+            CodAtv = atv            
+            ,CodPar = participante.CodPar
         });
-        _context.Participantes.Add(participante);
         _context.AxParticipanteAtividade.AddRange(participanteAtividades);
         _context.AxParticipantePacote.Add(participantePacote);
         _context.SaveChanges();

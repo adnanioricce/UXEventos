@@ -1,44 +1,76 @@
 CREATE DATABASE SucessoEventosDb;
 USE SucessoEventosDb;
--- Criação da tabela Participantes
-CREATE TABLE Participantes (
-    CodPar INT PRIMARY KEY IDENTITY(1,1),
-    Nome NVARCHAR(255) NOT NULL,
-    DataNascimento DATETIME NOT NULL,
-    Telefone NVARCHAR(20) NOT NULL
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+
+
+BEGIN TRANSACTION;
+
+
+CREATE TABLE [Atividades] (
+    [CodAtv] int NOT NULL IDENTITY,
+    [DescAtv] nvarchar(255) NOT NULL,
+    [Vagas] int NOT NULL,
+    [Preco] decimal(18,2) NOT NULL,
+    CONSTRAINT [PK_Atividades] PRIMARY KEY ([CodAtv])
 );
 
--- Criação da tabela Pacotes
-CREATE TABLE Pacotes (
-    CodPacote INT PRIMARY KEY IDENTITY(1,1),
-    Descricao NVARCHAR(255) NOT NULL,
-    Preco DECIMAL(18, 2) NOT NULL,
-    DataViradaPreco DATETIME NOT NULL
+
+CREATE TABLE [Pacotes] (
+    [CodPacote] int NOT NULL IDENTITY,
+    [Preco] decimal(18,2) NOT NULL,
+    [DataViradaPreco] datetime2 NOT NULL,
+    [Descricao] nvarchar(255) NOT NULL,
+    CONSTRAINT [PK_Pacotes] PRIMARY KEY ([CodPacote])
 );
 
--- Criação da tabela Atividades
-CREATE TABLE Atividades (
-    CodAtv INT PRIMARY KEY IDENTITY(1,1),
-    DescAtv NVARCHAR(255) NOT NULL,
-    Vagas INT NOT NULL,
-    Preco DECIMAL(18, 2) NOT NULL
+
+CREATE TABLE [Participantes] (
+    [CodPar] int NOT NULL IDENTITY,
+    [Nome] nvarchar(255) NOT NULL,
+    [DataNascimento] datetime2 NOT NULL,
+    [Telefone] nvarchar(20) NOT NULL,
+    CONSTRAINT [PK_Participantes] PRIMARY KEY ([CodPar])
 );
 
--- Tabela de associação entre Participante e Pacote
-CREATE TABLE AxParticipantePacote (
-    CodPar INT NOT NULL,
-    CodPacote INT NOT NULL,
-    PRIMARY KEY (CodPar, CodPacote),
-    FOREIGN KEY (CodPar) REFERENCES Participantes(CodPar),
-    FOREIGN KEY (CodPacote) REFERENCES Pacotes(CodPacote)
+
+CREATE TABLE [AxParticipanteAtividade] (
+    [CodPar] int NOT NULL,
+    [CodAtv] int NOT NULL,
+    [ParticipanteCodPar] int NULL,
+    CONSTRAINT [PK_AxParticipanteAtividade] PRIMARY KEY ([CodPar], [CodAtv]),
+    CONSTRAINT [FK_AxParticipanteAtividade_Atividades_CodAtv] FOREIGN KEY ([CodAtv]) REFERENCES [Atividades] ([CodAtv]) ON DELETE CASCADE,
+    CONSTRAINT [FK_AxParticipanteAtividade_Participantes_CodPar] FOREIGN KEY ([CodPar]) REFERENCES [Participantes] ([CodPar]) ON DELETE CASCADE,
+    CONSTRAINT [FK_AxParticipanteAtividade_Participantes_ParticipanteCodPar] FOREIGN KEY ([ParticipanteCodPar]) REFERENCES [Participantes] ([CodPar])
 );
 
--- Tabela de associação entre Participante e Atividade
-CREATE TABLE AxParticipanteAtividade (
-    CodPar INT NOT NULL,
-    CodAtv INT NOT NULL,
-    PRIMARY KEY (CodPar, CodAtv),
-    FOREIGN KEY (CodPar) REFERENCES Participantes(CodPar),
-    FOREIGN KEY (CodAtv) REFERENCES Atividades(CodAtv)
+
+CREATE TABLE [AxParticipantePacote] (
+    [CodPar] int NOT NULL,
+    [CodPacote] int NOT NULL,
+    CONSTRAINT [PK_AxParticipantePacote] PRIMARY KEY ([CodPar], [CodPacote]),
+    CONSTRAINT [FK_AxParticipantePacote_Pacotes_CodPacote] FOREIGN KEY ([CodPacote]) REFERENCES [Pacotes] ([CodPacote]) ON DELETE CASCADE,
+    CONSTRAINT [FK_AxParticipantePacote_Participantes_CodPar] FOREIGN KEY ([CodPar]) REFERENCES [Participantes] ([CodPar]) ON DELETE CASCADE
 );
 
+
+CREATE INDEX [IX_AxParticipanteAtividade_CodAtv] ON [AxParticipanteAtividade] ([CodAtv]);
+
+
+CREATE INDEX [IX_AxParticipanteAtividade_ParticipanteCodPar] ON [AxParticipanteAtividade] ([ParticipanteCodPar]);
+
+
+CREATE INDEX [IX_AxParticipantePacote_CodPacote] ON [AxParticipantePacote] ([CodPacote]);
+
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240915200840_InitCreate', N'8.0.8');
+
+
+COMMIT;
