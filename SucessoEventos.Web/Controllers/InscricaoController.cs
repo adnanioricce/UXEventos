@@ -1,10 +1,6 @@
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SucessoEventos.Entities;
 using SucessoEventos.Web.Extensions;
 using SucessoEventos.Web.Models;
@@ -20,7 +16,25 @@ public class InscricaoController : Controller
     {
         _context = context;
     }
-
+    public async Task<IActionResult> Index()
+    {
+        var inscricoes = await _context.Participantes
+            .Include(i => i.AxParticipanteAtividades) // Assuming you have a navigation property to Pacote
+                .ThenInclude(at => at.Atividade)
+            // .Include(i => i.Atividades) // Assuming you have a navigation property to Atividades
+            .Include(i => i.AxParticipantePacotes)
+                .ThenInclude(p => p.Pacote)
+            .ToListAsync();
+        var inscricoesReadModel = inscricoes.Select(ins => new ReadInscricaoModel {
+            CodigoParticipante = ins.CodPar
+            ,DataNascimento = ins.DataNascimento.ToShortDateString()
+            ,Nome = ins.Nome
+            ,Telefone = ins.Telefone
+            ,Pacote = ins.AxParticipantePacotes.Select(p => p.Pacote).FirstOrDefault() ?? default!
+            ,Atividades = ins.AxParticipanteAtividades.Select(p => p.Atividade).ToList()            
+        });
+        return View(inscricoesReadModel);
+    }
     // GET: Inscricao/Create
     public IActionResult Create()
     {

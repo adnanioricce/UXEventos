@@ -88,12 +88,5 @@ public class ParticipantesConfiguration
                 .WithMany()
                 .HasForeignKey(e => e.CodAtv);
         });
-        // modelBuilder.Entity<AxParticipantePacote>()
-        //     .ToTable("AxParticipantePacote")
-        //     .HasKey(ap => new { ap.CodPar, ap.CodPacote });
-
-        // modelBuilder.Entity<AxParticipanteAtividade>()
-        //     .ToTable("AxParticipanteAtividade")
-        //     .HasKey(aa => new { aa.CodPar, aa.CodAtv });
     }
 }

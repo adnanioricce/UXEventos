@@ -1,0 +1,51 @@
+@model IEnumerable<SucessoEventos.Web.Models.ReadInscricaoModel>
+@{
+    ViewData["Title"] = "Lista de Inscrições";
+}
+
+<h2 class="center-align">Lista de Inscrições</h2>
+<a asp-action="Create" asp-controller="Inscricao" class="btn blue">Criar nova inscrição</a>
+<table class="striped highlight responsive-table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>Telefone</th>
+            <th>Pacote</th>
+            <th>Atividades</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inscricao in Model)
+        {
+            <tr>
+                <td>@inscricao.Nome</td>
+                <td>@inscricao.DataNascimento</td>
+                <td>@inscricao.Telefone</td>
+                <td>@inscricao.Pacote.Descricao</td> <!-- Assuming Pacote has a Descricao -->
+                <td>
+                    @if (inscricao.Atividades != null && inscricao.Atividades.Any())
+                    {
+                        <ul>
+                            @foreach (var atividade in inscricao.Atividades)
+                            {
+                                <li>@atividade.DescAtv</li> <!-- Assuming Atividade has a DescAtv -->
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>Sem atividades</span>
+                    }
+                </td>
+                <td>
+                    @* Decidi não implementar isso por falta de tempo *@
+                    @* <a asp-action="Details" asp-route-id="@inscricao.CodigoParticipante" class="btn blue">Detalhes</a>
+                    <a asp-action="Edit" asp-route-id="@inscricao.CodigoParticipante" class="btn yellow">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@inscricao.CodigoParticipante" class="btn red">Deletar</a> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
