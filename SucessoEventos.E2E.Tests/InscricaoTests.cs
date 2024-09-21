@@ -2,6 +2,7 @@ namespace SucessoEventos.E2E.Tests;
 
 using Microsoft.Playwright.NUnit;
 using Microsoft.Playwright;
+using System.Text.RegularExpressions;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
